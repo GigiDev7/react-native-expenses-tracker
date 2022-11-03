@@ -1,5 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Text, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Alert,
+  Pressable,
+  Keyboard,
+} from "react-native";
 import { ExpensesContext } from "../store/expanses-context";
 import Button from "./Button";
 import Input from "./Input";
@@ -62,52 +69,54 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Your Expense</Text>
-      <View style={styles.inputRow}>
+    <Pressable onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Your Expense</Text>
+        <View style={styles.inputRow}>
+          <Input
+            isValid={form.amountValid}
+            style={{ flex: 1 }}
+            label="Amount"
+            inputConfig={{
+              keyboardType: "decimal-pad",
+              onChangeText: (text) => handleChange(text, "amount"),
+              value: form.amount,
+            }}
+          />
+          <Input
+            isValid={form.dateValid}
+            style={{ flex: 1 }}
+            label="Date"
+            inputConfig={{
+              placeholder: "YYYY-MM-DD",
+              maxLength: 10,
+              onChangeText: (text) => handleChange(text, "date"),
+              value: form.date,
+            }}
+          />
+        </View>
         <Input
-          isValid={form.amountValid}
-          style={{ flex: 1 }}
-          label="Amount"
+          isValid={form.descriptionValid}
+          label="Description"
           inputConfig={{
-            keyboardType: "decimal-pad",
-            onChangeText: (text) => handleChange(text, "amount"),
-            value: form.amount,
+            multiline: true,
+            onChangeText: (text) => handleChange(text, "description"),
+            value: form.description,
           }}
         />
-        <Input
-          isValid={form.dateValid}
-          style={{ flex: 1 }}
-          label="Date"
-          inputConfig={{
-            placeholder: "YYYY-MM-DD",
-            maxLength: 10,
-            onChangeText: (text) => handleChange(text, "date"),
-            value: form.date,
-          }}
-        />
+        {(!form.amountValid || !form.dateValid || !form.descriptionValid) && (
+          <Text style={styles.errorText}>Invalid input values!</Text>
+        )}
+        <View style={styles.buttonContainer}>
+          <Button style={styles.button} mode="flat" onPress={onCancel}>
+            Cancel
+          </Button>
+          <Button style={styles.button} onPress={submitHandler}>
+            {editingExpanseId ? "Update" : "Add"}
+          </Button>
+        </View>
       </View>
-      <Input
-        isValid={form.descriptionValid}
-        label="Description"
-        inputConfig={{
-          multiline: true,
-          onChangeText: (text) => handleChange(text, "description"),
-          value: form.description,
-        }}
-      />
-      {(!form.amountValid || !form.dateValid || !form.descriptionValid) && (
-        <Text style={styles.errorText}>Invalid input values!</Text>
-      )}
-      <View style={styles.buttonContainer}>
-        <Button style={styles.button} mode="flat" onPress={onCancel}>
-          Cancel
-        </Button>
-        <Button style={styles.button} onPress={submitHandler}>
-          {editingExpanseId ? "Update" : "Add"}
-        </Button>
-      </View>
-    </View>
+    </Pressable>
   );
 };
 
