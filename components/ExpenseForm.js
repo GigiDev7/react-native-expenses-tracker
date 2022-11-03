@@ -1,12 +1,20 @@
 import { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { ExpensesContext } from "../store/expanses-context";
 import Button from "./Button";
 import Input from "./Input";
 import { getFormattedDate } from "../utils/date";
+import { GlobalStyles } from "../constants/styles";
 
 const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
-  const [form, setForm] = useState({ amount: "", date: "", description: "" });
+  const [form, setForm] = useState({
+    amount: "",
+    date: "",
+    description: "",
+    amountValid: true,
+    dateValid: true,
+    descriptionValid: true,
+  });
   const expenseCtx = useContext(ExpensesContext);
 
   useEffect(() => {
@@ -19,6 +27,9 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
         amount: expense.amount.toString(),
         date: getFormattedDate(expense.date),
         description: expense.description,
+        amountValid: true,
+        dateValid: true,
+        descriptionValid: true,
       });
     }
   }, []);
@@ -36,7 +47,18 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
       description: form.description,
     };
 
-    onConfirm(expenseData);
+    const amountValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
+    const dateValid = expenseData.date.toString() !== "Invalid Date";
+    const descriptionValid = expenseData.description.trim().length > 0;
+
+    if (amountValid && dateValid && descriptionValid) {
+      onConfirm(expenseData);
+    } else {
+      //Alert.alert("Invalid input", "Please enter valid input values");
+      setForm((prev) => {
+        return { ...prev, amountValid, dateValid, descriptionValid };
+      });
+    }
   };
 
   return (
@@ -44,6 +66,7 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
       <Text style={styles.title}>Your Expense</Text>
       <View style={styles.inputRow}>
         <Input
+          isValid={form.amountValid}
           style={{ flex: 1 }}
           label="Amount"
           inputConfig={{
@@ -53,6 +76,7 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
           }}
         />
         <Input
+          isValid={form.dateValid}
           style={{ flex: 1 }}
           label="Date"
           inputConfig={{
@@ -64,6 +88,7 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
         />
       </View>
       <Input
+        isValid={form.descriptionValid}
         label="Description"
         inputConfig={{
           multiline: true,
@@ -71,6 +96,9 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
           value: form.description,
         }}
       />
+      {(!form.amountValid || !form.dateValid || !form.descriptionValid) && (
+        <Text style={styles.errorText}>Invalid input values!</Text>
+      )}
       <View style={styles.buttonContainer}>
         <Button style={styles.button} mode="flat" onPress={onCancel}>
           Cancel
@@ -107,6 +135,13 @@ const styles = StyleSheet.create({
   button: {
     minWidth: 120,
     marginHorizontal: 8,
+  },
+  errorText: {
+    textAlign: "center",
+    color: GlobalStyles.colors.error500,
+    margin: 8,
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
