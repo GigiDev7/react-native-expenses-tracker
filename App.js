@@ -9,6 +9,7 @@ import AllExpenses from "./screens/AllExpenses";
 import { Ionicons } from "@expo/vector-icons";
 import { GlobalStyles } from "./constants/styles";
 import IconButton from "./components/IconButton";
+import { ExpensesContextProvider } from "./store/expanses-context";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -19,7 +20,11 @@ function ExpensesOverview() {
       screenOptions={({ navigation }) => ({
         headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
         headerTintColor: "white",
-        tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+        tabBarStyle: {
+          backgroundColor: GlobalStyles.colors.primary500,
+          paddingBottom: 6,
+          paddingTop: 6,
+        },
         tabBarActiveTintColor: GlobalStyles.colors.accent500,
         headerRight: ({ tintColor }) => (
           <IconButton
@@ -61,35 +66,37 @@ export default function App() {
   return (
     <>
       <StatusBar style="light" />
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-            headerTintColor: "white",
-          }}
-        >
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="ExpensesOverview"
-            component={ExpensesOverview}
-          />
-          <Stack.Screen
-            options={({ navigation }) => ({
-              presentation: "modal",
-              headerLeft: ({ tintColor }) => (
-                <IconButton
-                  icon="arrow-back"
-                  color={tintColor}
-                  size={24}
-                  onPress={() => navigation.goBack()}
-                />
-              ),
-            })}
-            name="ManageExpense"
-            component={ManageExpanses}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <ExpensesContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+              headerTintColor: "white",
+            }}
+          >
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="ExpensesOverview"
+              component={ExpensesOverview}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                presentation: "modal",
+                headerLeft: ({ tintColor }) => (
+                  <IconButton
+                    icon="arrow-back"
+                    color={tintColor}
+                    size={24}
+                    onPress={() => navigation.goBack()}
+                  />
+                ),
+              })}
+              name="ManageExpense"
+              component={ManageExpanses}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ExpensesContextProvider>
     </>
   );
 }
