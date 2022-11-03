@@ -60,7 +60,7 @@ function ExpensesOverview() {
 export default function App() {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -74,9 +74,17 @@ export default function App() {
             component={ExpensesOverview}
           />
           <Stack.Screen
-            options={{
+            options={({ navigation }) => ({
               presentation: "modal",
-            }}
+              headerLeft: ({ tintColor }) => (
+                <IconButton
+                  icon="arrow-back"
+                  color={tintColor}
+                  size={24}
+                  onPress={() => navigation.goBack()}
+                />
+              ),
+            })}
             name="ManageExpense"
             component={ManageExpanses}
           />
