@@ -3,11 +3,16 @@ import { Text, View, StyleSheet } from "react-native";
 import Button from "../components/Button";
 import IconButton from "../components/IconButton";
 import { GlobalStyles } from "../constants/styles";
+import { useContext } from "react";
+import { ExpensesContext } from "../store/expanses-context";
 
 const ManageExpanses = ({ navigation, route }) => {
   const editingExpanseId = route.params?.expenseId;
 
+  const expensesCtx = useContext(ExpensesContext);
+
   const deleteExpense = () => {
+    expensesCtx.deleteExpense(editingExpanseId);
     navigation.goBack();
   };
 
@@ -16,6 +21,19 @@ const ManageExpanses = ({ navigation, route }) => {
   };
 
   const confirmHandler = () => {
+    if (editingExpanseId) {
+      expensesCtx.updateExpense(editingExpanseId, {
+        description: "Hair",
+        amount: 15,
+        date: new Date(),
+      });
+    } else {
+      expensesCtx.addExpense({
+        description: "Hair",
+        amount: 15,
+        date: new Date(),
+      });
+    }
     navigation.goBack();
   };
 

@@ -11,10 +11,16 @@ const RecentExpanses = () => {
     const today = new Date();
     const res = getDateMinusDays(today, 7);
 
-    return el.date > res;
+    return el.date >= res;
   });
 
-  return <ExpansesOutput expenses={expenses} period="Last 7 Days" />;
+  return (
+    <ExpansesOutput
+      fallbackText="No expenses for the last 7 days."
+      expenses={expenses}
+      period="Last 7 Days"
+    />
+  );
 };
 
 export default RecentExpanses;
