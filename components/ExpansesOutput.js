@@ -34,7 +34,7 @@ const ExpansesOutput = ({ expenses, period }) => {
   return (
     <View style={styles.container}>
       <ExpensesSummary expenses={dummy} period={period} />
-      <ExpensesList expenses={expenses} />
+      <ExpensesList expenses={dummy} />
     </View>
   );
 };
