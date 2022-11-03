@@ -1,10 +1,11 @@
 import { useLayoutEffect } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TextInput } from "react-native";
 import Button from "../components/Button";
 import IconButton from "../components/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { useContext } from "react";
 import { ExpensesContext } from "../store/expanses-context";
+import ExpenseForm from "../components/ExpenseForm";
 
 const ManageExpanses = ({ navigation, route }) => {
   const editingExpanseId = route.params?.expenseId;
@@ -20,19 +21,11 @@ const ManageExpanses = ({ navigation, route }) => {
     navigation.goBack();
   };
 
-  const confirmHandler = () => {
+  const confirmHandler = (expenseData) => {
     if (editingExpanseId) {
-      expensesCtx.updateExpense(editingExpanseId, {
-        description: "Hair",
-        amount: 15,
-        date: new Date(),
-      });
+      expensesCtx.updateExpense(editingExpanseId, expenseData);
     } else {
-      expensesCtx.addExpense({
-        description: "Hair",
-        amount: 15,
-        date: new Date(),
-      });
+      expensesCtx.addExpense(expenseData);
     }
     navigation.goBack();
   };
@@ -47,14 +40,11 @@ const ManageExpanses = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Button style={styles.button} mode="flat" onPress={cancelHandler}>
-          Cancel
-        </Button>
-        <Button style={styles.button} onPress={confirmHandler}>
-          {editingExpanseId ? "Update" : "Add"}
-        </Button>
-      </View>
+      <ExpenseForm
+        onConfirm={confirmHandler}
+        onCancel={cancelHandler}
+        editingExpanseId={editingExpanseId}
+      />
       {editingExpanseId && (
         <View style={styles.deleteContainer}>
           <IconButton
@@ -81,15 +71,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderTopColor: GlobalStyles.colors.primary200,
     alignItems: "center",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    minWidth: 120,
-    marginHorizontal: 8,
   },
 });
 
