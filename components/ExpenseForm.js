@@ -42,9 +42,24 @@ const ExpenseForm = ({ onConfirm, onCancel, editingExpanseId }) => {
   }, []);
 
   const handleChange = (enteredValue, type) => {
-    setForm((prev) => {
-      return { ...prev, [type]: enteredValue };
-    });
+    if (type === "date") {
+      if (
+        enteredValue.length > form.date.length &&
+        (enteredValue.length === 4 || enteredValue.length === 7)
+      ) {
+        setForm((prev) => {
+          return { ...prev, date: `${enteredValue}-` };
+        });
+      } else {
+        setForm((prev) => {
+          return { ...prev, date: enteredValue };
+        });
+      }
+    } else {
+      setForm((prev) => {
+        return { ...prev, [type]: enteredValue };
+      });
+    }
   };
 
   const submitHandler = () => {
